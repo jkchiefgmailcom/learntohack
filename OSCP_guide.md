@@ -34,6 +34,7 @@ For OSCP Lab machine enumeration automation, checkout my other project: **VANQUI
 - [Networking, Pivoting and Tunneling](#networking-pivoting-and-tunneling)
 - [The Metasploit Framework](#the-metasploit-framework)
 - [Bypassing Antivirus Software](#bypassing-antivirus-software)
+- [Different Scripting](#different-scripting)
 
 Kali Linux
 ========================================================================================================
@@ -42,6 +43,7 @@ Kali Linux
     `export ip=192.168.1.100`
 
 -   Find the location of a file  
+    `updatedb`
     `locate sbd.exe`
 
 -   Search through directories in the `$PATH` environment variable  
@@ -50,24 +52,25 @@ Kali Linux
 -   Find a search for a file that contains a specific string in it’s
     name:  
     `find / -name sbd\*`
+    `find / -regex .*access.* | grep log`
+    
+-   Find file and then execute something  
+    `find / -name plink.\exe -exec file {} \; `
 
 -   Show active internet connections  
     `netstat -lntp`
-
--   Change Password  
-    `passwd`
-
 -   Verify a service is running and listening  
     `netstat -antp |grep apache`
 
 -   Start a service  
     `systemctl start ssh  `
-    
     `systemctl start apache2`
 
 -   Have a service start at boot  
     `systemctl enable ssh`
-
+    rcconf tool can be used
+    `rcconf`
+    
 -   Stop a service  
     `systemctl stop ssh`
 
@@ -91,9 +94,11 @@ Kali Linux
     -   Count number of lines in file  
         `wc -l index.html`
 
+    -   Sort IPs
+        `cat lab10.11.1.list | sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4`
+
     -   Get the start or end of a file  
         `head index.html`
-        
         `tail index.html`
 
     -   Extract all the lines that contain a string  
@@ -115,7 +120,6 @@ Kali Linux
 -   Decoding using Kali
 
     -   Decode Base64 Encoded Values
-       
         `echo -n "QWxhZGRpbjpvcGVuIHNlc2FtZQ==" | base64 --decode`
 
     -   Decode Hexidecimal Encoded Values  
@@ -172,32 +176,6 @@ Kali Linux
     -   Listen on port 4444 using ssl  
         `ncat -v $ip 4444 --ssl`
 
--   Wireshark
-    -   Show only SMTP (port 25) and ICMP traffic:
-    
-        `tcp.port eq 25 or icmp`
-        
-    -   Show only traffic in the LAN (192.168.x.x), between workstations and servers -- no Internet:
-        
-        `ip.src==192.168.0.0/16 and ip.dst==192.168.0.0/16`
-        
-    -   Filter by a protocol ( e.g. SIP ) and filter out unwanted IPs:
-        
-        `ip.src != xxx.xxx.xxx.xxx && ip.dst != xxx.xxx.xxx.xxx && sip`
-        
-    -   Some commands are equal
-        
-        `ip.addr == xxx.xxx.xxx.xxx`
-        
-         Equals
-        
-        `ip.src == xxx.xxx.xxx.xxx or ip.dst == xxx.xxx.xxx.xxx `
-
-        ` ip.addr != xxx.xxx.xxx.xxx`
-        
-         Equals
-        
-        `ip.src != xxx.xxx.xxx.xxx or ip.dst != xxx.xxx.xxx.xxx`
 
 -   Tcpdump
 
@@ -216,11 +194,9 @@ Kali Linux
 -   IPTables 
 
     -   Deny traffic to ports except for Local Loopback
-
         `iptables -A INPUT -p tcp --destination-port 13327 ! -d $ip -j DROP  `
-    
         `iptables -A INPUT -p tcp --destination-port 9991 ! -d $ip -j DROP`
-
+            
     -   Clear ALL IPTables firewall rules
     
             ```bash
@@ -233,6 +209,16 @@ Kali Linux
             iptables -X
             iptables -t raw -F iptables -t raw -X
             ```
+             
+    -   Count  IPTables traffic for specific host
+            
+            ```
+            iptables -I INPUT 1 -s 10.11.1.227 -j ACCEPT
+            iptables -I OUTPUT 1 -d 10.11.1.227 -j ACCEPT
+            iptables -Z
+            iptables -vn -L
+            ```
+            
 
 Information Gathering & Vulnerability Scanning
 ===================================================================================================================================
@@ -240,29 +226,11 @@ Information Gathering & Vulnerability Scanning
 -   Passive Information Gathering
     ---------------------------------------------------------------------------------------------------------------------------
 
--   Google Hacking
-
-    -   Google search to find website sub domains  
-        `site:microsoft.com`
-
-    -   Google filetype, and intitle  
-        `intitle:"netbotz appliance" "OK" -filetype:pdf`
-
-    -   Google inurl  
-        `inurl:"level/15/sexec/-/show"`
-
-    -   Google Hacking Database:  
-        https://www.exploit-db.com/google-hacking-database/
-
--   SSL Certificate Testing  
-    [https://www.ssllabs.com/ssltest/analyze.html](https://www.ssllabs.com/ssltest/analyze.html)
 
 -   Email Harvesting
 
-    -   Simply Email  
-        `git clone https://github.com/killswitch-GUI/SimplyEmail.git  `
-        
-        `./SimplyEmail.py -all -e TARGET-DOMAIN`
+    -   Theharvester
+        `theharvester -d site.com -b google`
 
 -   Netcraft
 
@@ -271,143 +239,60 @@ Information Gathering & Vulnerability Scanning
 
 -   Whois Enumeration  
     `whois domain-name-here.com  `
-    
     `whois $ip`
 
--   Banner Grabbing
-
-    -   `nc -v $ip 25`
-
-    -   `telnet $ip 25`
-
-    -   `nc TARGET-IP 80`
-
--   Recon-ng - full-featured web reconnaissance framework written in Python
-
-    -   `cd /opt; git clone https://LaNMaSteR53@bitbucket.org/LaNMaSteR53/recon-ng.git  `
-    
-        `cd /opt/recon-ng  `
-        
-        `./recon-ng  `
-        
-        `show modules  `
-        
-        `help`
 
 -   Active Information Gathering
     --------------------------------------------------------------------------------------------------------------------------
 
 <!-- -->
 
-
--   Port Scanning
+-   Host discovery
     -----------------------------------------------------------------------------------------------------------
-*Subnet Reference Table*
-
-/ | Addresses | Hosts | Netmask | Amount of a Class C
---- | --- | --- | --- | --- 
-/30 | 4 | 2 | 255.255.255.252| 1/64
-/29 | 8 | 6 | 255.255.255.248 | 1/32
-/28 | 16 | 14 | 255.255.255.240 | 1/16
-/27 | 32 | 30 | 255.255.255.224 | 1/8
-/26 | 64 | 62 | 255.255.255.192 | 1/4
-/25 | 128 | 126 | 255.255.255.128 | 1/2
-/24 | 256 | 254 | 255.255.255.0 | 1
-/23 | 512 | 510 | 255.255.254.0 | 2
-/22 | 1024 | 1022 | 255.255.252.0 | 4
-/21 | 2048 | 2046 | 255.255.248.0 | 8
-/20 | 4096 | 4094 | 255.255.240.0 | 16
-/19 | 8192 | 8190 | 255.255.224.0 | 32
-/18 | 16384 | 16382 | 255.255.192.0 | 64
-/17 | 32768 | 32766 | 255.255.128.0 | 128
-/16 | 65536 | 65534 | 255.255.0.0 | 256
-
- -   Set the ip address as a variable  
-     `export ip=192.168.1.100  `
-     `nmap -A -T4 -p- $ip`
-
- -   Netcat port Scanning  
-     `nc -nvv -w 1 -z $ip 3388-3390`
      
  -   Discover active IPs usign ARP on the network:
      `arp-scan $ip/24`
 
- -   Discover who else is on the network  
-     `netdiscover`
-
- -   Discover IP Mac and Mac vendors from ARP  
-     `netdiscover -r $ip/24`
-
- -   Nmap stealth scan using SYN  
-     `nmap -sS $ip`
-
- -   Nmap stealth scan using FIN  
-     `nmap -sF $ip`
-
- -   Nmap Banner Grabbing  
-     `nmap -sV -sT $ip`
-
- -   Nmap OS Fingerprinting  
-     `nmap -O $ip`
-
- -   Nmap Regular Scan:  
-     `nmap $ip/24`
-
- -   Enumeration Scan  
-     `nmap -p 1-65535 -sV -sS -A -T4 $ip/24 -oN nmap.txt`
-
- -   Enumeration Scan All Ports TCP / UDP and output to a txt file  
-     `nmap -oN nmap2.txt -v -sU -sS -p- -A -T4 $ip`
-
- -   Nmap output to a file:  
-     `nmap -oN nmap.txt -p 1-65535 -sV -sS -A -T4 $ip/24`
-
- -   Quick Scan:  
-     `nmap -T4 -F $ip/24`
-
- -   Quick Scan Plus:  
-     `nmap -sV -T4 -O -F --version-light $ip/24`
-
- -   Quick traceroute  
-     `nmap -sn --traceroute $ip`
-
- -   All TCP and UDP Ports  
-     `nmap -v -sU -sS -p- -A -T4 $ip`
-
- -   Intense Scan:  
-     `nmap -T4 -A -v $ip`
-
- -   Intense Scan Plus UDP  
-     `nmap -sS -sU -T4 -A -v $ip/24`
-
- -   Intense Scan ALL TCP Ports  
-     `nmap -p 1-65535 -T4 -A -v $ip/24`
-
- -   Intense Scan - No Ping  
-     `nmap -T4 -A -v -Pn $ip/24`
+ -   Discover ARP  with netdiscover tool 
+     `netdiscover -i tap0 -P -N -r 10.11.1.0/24`
 
  -   Ping scan  
      `nmap -sn $ip/24`
 
- -   Slow Comprehensive Scan  
-     `nmap -sS -sU -T4 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53 --script "default or (discovery and safe)" $ip/24`
 
- -   Scan with Active connect in order to weed out any spoofed ports designed to troll you  
-     `nmap -p1-65535 -A -T5 -sT $ip`
+-   Port Scanning
+    -----------------------------------------------------------------------------------------------------------
+
+ -   Netcat port Scanning  
+     `nc -nvv -w 1 -z $ip 3388-3390`
+     
+ 
+
 
 -   Enumeration
     -----------
 
+-   Banner Grabbing
+
+    -   `nc -v $ip 25`
+    -   `telnet $ip 25`
+    -   `nc TARGET-IP 80`
+
+
+
+
+
 -   DNS Enumeration
 
-    -   NMAP DNS Hostnames Lookup
-        `nmap -F --dns-server <dns server ip> <target ip range>`
+    -   Subdomain Harvesting from site
+        ```recon-ng
+        use recon/domains-hosts/google_site_web
+        set SOURCE bank.gov.ua
+        run
+        ```
         
     -   Host Lookup  
         `host -t ns megacorpone.com`
-
-    -   Reverse Lookup Brute Force - find domains in the same range  
-        `for ip in $(seq 155 190);do host 50.7.67.$ip;done |grep -v "not found"`
 
     -   Perform DNS IP Lookup  
         `dig a domain-name-here.com @nameserver`
@@ -420,11 +305,9 @@ Information Gathering & Vulnerability Scanning
 
     -   DNS Zone Transfers  
         Windows DNS zone transfer  
-        
         `nslookup -> set type=any -> ls -d blah.com  `
         
         Linux DNS zone transfer  
-        
         `dig axfr blah.com @ns1.blah.com`
         
     -   Dnsrecon DNS Brute Force  
@@ -438,8 +321,7 @@ Information Gathering & Vulnerability Scanning
 
 -   NMap Enumeration Script List:
 
-    -   NMap Discovery  
-        [*https://nmap.org/nsedoc/categories/discovery.html*](https://nmap.org/nsedoc/categories/discovery.html)
+
 
     -   Nmap port version detection MAXIMUM power  
         `nmap -vvv -A --reason --script="+(safe or default) and not broadcast" -p <port> <host>`
@@ -627,41 +509,23 @@ Information Gathering & Vulnerability Scanning
 
 -   Windows OS Enumeration
 
-
     -   net config Workstation
-    
     -   systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
-    
     -   hostname
-    
     -   net users
-    
     -   ipconfig /all
-    
     -   route print
-    
     -   arp -A
-    
     -   netstat -ano
-    
     -   netsh firewall show state	
-    
     -   netsh firewall show config
-    
     -   schtasks /query /fo LIST /v
-    
     -   tasklist /SVC
-    
     -   net start
-    
     -   DRIVERQUERY
-    
     -   reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated
-    
     -   reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated
-    
     -   dir /s *pass* == *cred* == *vnc* == *.config*
-    
     -   findstr /si password *.xml *.ini *.txt
     
     -   reg query HKLM /f password /t REG_SZ /s
@@ -672,6 +536,10 @@ Information Gathering & Vulnerability Scanning
 
 -   Nmap Exploit Scripts  
     [*https://nmap.org/nsedoc/categories/exploit.html*](https://nmap.org/nsedoc/categories/exploit.html)
+
+-   Nmap run scripts from vuln category      
+    `nmap  --script vuln 10.11.1.227` 
+    [*https://nmap.org/nsedoc/categories/vuln.html*](https://nmap.org/nsedoc/categories/vuln.html)
 
 -   Nmap search through vulnerability scripts  
     `cd /usr/share/nmap/scripts/  
@@ -686,8 +554,6 @@ Information Gathering & Vulnerability Scanning
 -   NMap Auth Scripts  
     [*https://nmap.org/nsedoc/categories/auth.html*](https://nmap.org/nsedoc/categories/auth.html)
 
--   Nmap Vuln Scanning  
-    [*https://nmap.org/nsedoc/categories/vuln.html*](https://nmap.org/nsedoc/categories/vuln.html)
 
 -   NMap DOS Scanning  
     `nmap --script dos -Pn $ip  
@@ -730,9 +596,6 @@ Information Gathering & Vulnerability Scanning
 -   HTTP Enumeration
     ----------------
 
-    -   Search for folders with gobuster:  
-        `gobuster -w /usr/share/wordlists/dirb/common.txt -u $ip`
-
     -   OWasp DirBuster - Http folder enumeration - can take a dictionary file
 
     -   Dirb - Directory brute force finding using a dictionary file  
@@ -740,7 +603,6 @@ Information Gathering & Vulnerability Scanning
         `dirb <http://vm/>  `
           
         Dirb against a proxy
-
     -   `dirb [http://$ip/](http://172.16.0.19/) -p $ip:3129`
 
     -   Nikto  
@@ -749,27 +611,14 @@ Information Gathering & Vulnerability Scanning
     -   HTTP Enumeration with NMAP  
         `nmap --script=http-enum -p80 -n $ip/24`
 
-    -   Nmap Check the server methods  
-        `nmap --script http-methods --script-args http-methods.url-path='/test' $ip`
 
-    -   Get Options available from web server
-         `curl -vX OPTIONS vm/test`
-
-      -   Uniscan directory finder:  
-          `uniscan -qweds -u <http://vm/>`
 
       -   Wfuzz - The web brute forcer
-      
           `wfuzz -c -w /usr/share/wfuzz/wordlist/general/megabeast.txt $ip:60080/?FUZZ=test  `
-          
           `wfuzz -c --hw 114 -w /usr/share/wfuzz/wordlist/general/megabeast.txt $ip:60080/?page=FUZZ  `
-          
           `wfuzz -c -w /usr/share/wfuzz/wordlist/general/common.txt "$ip:60080/?page=mailer&mail=FUZZ"`
-          
           `wfuzz -c -w /usr/share/seclists/Discovery/Web_Content/common.txt --hc 404 $ip/FUZZ`
-          
           Recurse level 3
-          
           `wfuzz -c -w /usr/share/seclists/Discovery/Web_Content/common.txt -R 3 --sc 200 $ip/FUZZ`
 
 <!-- -->
@@ -824,10 +673,6 @@ Information Gathering & Vulnerability Scanning
 
 Buffer Overflows and Exploits
 ===================================================================================================================================
-
--   DEP and ASLR - Data Execution Prevention (DEP) and Address Space
-    Layout Randomization (ASLR)
-
 
 -   Nmap Fuzzers:
 
@@ -2730,3 +2575,13 @@ Client, Web and Password Attacks
         cp -p /usr/lib/gcc/i686-w64-mingw32/5.3-win32/libstdc++-6.dll .  
         wine hyperion.exe ../backdoor.exe ../crypted.exe
         ```
+        
+        
+Different Scripting
+===================================================================================================================================
+
+-   Passive Information Gathering
+    ---------------------------------------------------------------------------------------------------------------------------
+
+
+
