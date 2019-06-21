@@ -1,3 +1,6 @@
+This is copy from  https://github.com/wwong99/pentest-notes/blob/master/oscp_resources/OSCP-Survival-Guide.md with my own modifications
+I use it a source of information to pass OSCP exam
+
 # OSCP-Survival-Guide
 Kali Linux Offensive Security Certified Professional Playbook
  
