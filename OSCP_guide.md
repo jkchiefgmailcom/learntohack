@@ -1178,7 +1178,6 @@ Privilege Escalation
 -   Try the obvious - Maybe the user is root or can sudo to root:  
     
     `id` 
-    
     `sudo su`
     
 -   Here are the commands I have learned to use to perform linux enumeration and privledge escalation:
