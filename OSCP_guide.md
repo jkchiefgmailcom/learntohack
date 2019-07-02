@@ -362,7 +362,7 @@ Information Gathering & Vulnerability Scanning
         `nmap -T4 -v -oA shares --script smb-enum-shares --script-args smbuser=username,smbpass=password -p445 192.168.10.0/24`
 
     -   Nmap scans for vulnerable SMB Servers  
-        `nmap -v -p 445 --script=smb-check-vulns --script-args=unsafe=1 $ip`
+        `nmap -v -p 445 --script=smb2-vuln-uptime.nse,smb-vuln-conficker.nse,smb-vuln-cve2009-3103.nse,smb-vuln-cve-2017-7494.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse,smb-vuln-regsvc-dos.nse --script-args=unsafe=1 10.11.1.0/24 `
 
 
 
